@@ -54,3 +54,11 @@ Complex fulcrumPoint = new Complex(23.0);
 1. Given `MailingAddress` class in `GSD` namespace, you don't need `string gsdMailingAddress` inside the class
 
 
+# Chapter 3: Functions
+### Small!
+1. Small functions are transparently obvious, each tells a story
+2. The block within `if`, `else`, or `while` statement should be one line long, probably a function
+3. Avoid nesting, the indent level should not be greater than two
+4. DO ONE THING - functions contain only functions of the next level of abstraction
+
+### Switch Statements
