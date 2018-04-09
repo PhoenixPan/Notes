@@ -181,3 +181,18 @@ private void deletePageAndAllReferences(Page page) throws Exception {
 ### Vertical Formatting
 1. Vertical Density: Lines of code that are tightly related should appear vertically dense, no irrelevant elements or pointless comments in between
 2. Vertical Distance: Concepts that are closely related should be kept vertically close to each other. They should not be separated into different files
+3. Variable Declarations: as close to their usage as possible, unless it's been used throughout the scope
+4. Instance Variables: declared at the top of the class (Java)
+5. Dependent Functions: If one function calls another, they should be vertically close
+
+### Horizontal Formatting
+1. The Hollerith 80 limit is not necessary
+2. Rule: never scroll right
+3. Density: Use white space flexibily, we don't have to impose same spacing throughout: `b*b - 4*a*c;`
+4. Indentation: used to indicate code hiearchy
+5. Break Indentation: skipping indentation and {} for short if or loop is discouraged
+
+### Team Rules
+1. A team should agree on one formatting style
+
+# Chapter 6: Objects and Data Structures
