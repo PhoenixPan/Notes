@@ -62,7 +62,7 @@ array.forEach(function(color) { // anonymous function
 for (x in person)
 3. const: cannot be reassigned but can be changed (e.g. array)
 
-Pointer example: 
+[Pointer example](https://www.cnblogs.com/huaan011/p/4381703.html)
 ```
 var a = {n:1};
 var b = a;
