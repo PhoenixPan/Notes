@@ -17,59 +17,35 @@ for (var i = 0; i < cars.length; i++) {
 }
 ```
 
-
 ## Basics
-Hoisting: declare at the beginning (not initializing)
-let: limits to block. It is not available using "var", which only limits to functions.
-for (x in person)
-onmousedown, onmouseup, onclick 
+#### Hoisting
+Lift declaration to the top (not initialization)
 
-Window.localStorage: across session
-Window.sessionStorage: live for one session, refresh is ok, die upon closing tab
-session cookies: live until the WINDOW is closed. Plain text for user, encrypted on only https. Cookies will be sent everytime a user sends a request, so try to avoid overloading it. Put authentication in cookies, as storages are not sent with the requests everytime. Plain text for user, encrypted on only https. Cookies will be sent everytime a user sends a request, so try to avoid overloading it. Put authentication in cookies, as storages are not sent with the requests everytime
-
-```
-document.querySelector()
-querySelectorAll
-getElementsByClassName
-document.getElementById();
-document.getElementsByTagName();
-document.bogy;
-```
-```
-$(".plan-projects-container").append("<div>")
-```
-
-## Regex
-Using a regular expression literal, which consists of a pattern enclosed between slashes, as follows:
-```
-var re = /exp/g;    same as new RegExp('exp', 'g');
-```
+#### Storage
+1. Window.localStorage: across session
+2. Window.sessionStorage: live for one session, refresh is ok, die upon closing tab
+3. Session cookies: live until the WINDOW is closed. Plain text for user, encrypted on only https. Cookies will be sent everytime a user sends a request, so try to avoid overloading it. Put authentication in cookies. Plain text for user, encrypted on only https. 
 
 ## Operation 
-01 + "05" = "105"
-
-undefined & null: 
-== true
-=== false
-
-//Same as Java
+```
+//Same as Java (+)
 "a" + 1 + 2 // a12
-1 + 2 + "a" // 3
+1 + 2 + "a" // 3a
 
-//Different from Java
+//Different from Java (-, *, /)
 1 - "2" // -1        
 "2" - "1" // 1
 "100" / 10 // 10
 "10" * "10" // 100
-
-Divide by 0 will also give Infinity
+```
+1. 01 + "05" = 105 (string)
+2. "01" + 05 = 015 (string)
+3. undefined & null: == true, === false
+4. Divide by 0 will also give Infinity
 
 ## Array
 ```
 array.join(" "); // get all elements concatenated on space
-```
-```
 var array = [1,2,3];
 var array  = new Array(1,2,3);
 array.shift/unshift()   pop/peek the head
@@ -81,55 +57,30 @@ array.forEach(function(color) { // anonymous function
 ```
 
 ## Variables 
-Undeclared variables: implicit globals
+1. Undeclared variables: implicit globals
+2. let: limits to block. It is not available using "var", which only limits to functions.
+for (x in person)
+3. const: cannot be reassigned but can be changed (e.g. array)
 
-Example: 
-```
-var a = {n:1};
-  var a b = =;
-a.x b  3; // equals to b = 3; (impsame results, why
-a.x; // undefined
-b.x; // {n: 2}
-a; // {n: 2}
-b; // equals a = {n:2};
-// a= a.x = {n:2}; (impli// call here: b = 3, a = 3
-})();
-// call here: b = 3, a = undefined
-```
 Example: 
 ```
 var a = {n:1};
 var b = a;
-a.x = a = {n:2};
-// a= a.x = {n:2}; // same results, why
+a.x = a = {n:2}; // equals to b = 3; (impsame results, why
 a.x; // undefined
 b.x; // {n: 2}
-a; // {n: 2}
-b; //{n: 1, x: {n:2}}
 ```
-
 1. a points to {n:1}
 2. b points to a, same, {n:1}
 3. 连等会先确定所有变量的指针，再从右向左，所以a.x有 {n:1, x:null}, b.x 相同
 4. a points to {n:2}
 5. a.x, {n:1, x=null}, points to {n:2} and becomes {n:1, x:{n:2}}, which b points to
 
-const: cannot be reassigned but can be changed (array element)
-
 ## Functions
-``` 
-function test() { console.log("a")};
-var test2 = function() {console.log("b")}; // assign anonymous 
-(function() {alert('Hello World');})(); // run anonymous 
-```
-Function expression: var fun = function() {...};
-parsed when executed, cannot be hoisted
-Function declaration: function fun() {...};
-parsed when encountered, can be hoisted
-
-Immediately Invoked Function Expression (self-executing anonymous function): avoid variable hoisting
+1. Function expression: var fun = function() {...}; parsed when executed, cannot be hoisted
+2. Function declaration: function fun() {...}; parsed when encountered, can be hoisted
+3. Immediately Invoked Function Expression (self-executing anonymous function): avoid variable hoisting
 https://www.tutorialspoint.com/es6/es6_functions.htm
-
 
 ### Generator function
 ```
@@ -147,7 +98,6 @@ console.log(it.next('Cricket'));
 ### Arrow Function 
 // Parenthesize the body of function to return an object literal expression:
 params => ({foo: bar}) 
-
 
 ## Object
 JavaScript objects cannot be compared, use JSON or loop the properties
@@ -186,7 +136,6 @@ var o = {
 console.log(o.m()); // 3
 var p = Object.create(o); // p is an object that inherits from o
 ```
-
 
 ## Closure
 
@@ -300,15 +249,21 @@ for(var i = 0; i < 5; i++) {
 }
 ```
 
+## Regex
+Using a regular expression literal, which consists of a pattern enclosed between slashes, as follows:
+```
+var re = /exp/g;   // same as new RegExp('exp', 'g');
+```
+
 ## CSS
-All children: X Y {color:blue;}
-All direct children: X > Y {color:blue;}
-Immediate sibling: X + Y {color:blue;}
-All preceding sibling: X ~ Y {color:blue;}
-
-
+1. All children: X Y {color:blue;}
+2. All direct children: X > Y {color:blue;}
+3. Immediate sibling: X + Y {color:blue;}
+4. All preceding sibling: X ~ Y {color:blue;}
 
 ## Trick
+```
 function(num) {
   var value = num || 10; // if num is 0, value becomes 10 instead of 0, as 0 is evaluated "false"
 }
+```
