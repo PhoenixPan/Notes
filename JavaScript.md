@@ -62,19 +62,19 @@ array.forEach(function(color) { // anonymous function
 for (x in person)
 3. const: cannot be reassigned but can be changed (e.g. array)
 
-Example: 
+Pointer example: 
 ```
 var a = {n:1};
 var b = a;
-a.x = a = {n:2}; // equals to b = 3; (impsame results, why
+a.x = a = {n:2};
 a.x; // undefined
 b.x; // {n: 2}
 ```
 1. a points to {n:1}
-2. b points to a, same, {n:1}
-3. 连等会先确定所有变量的指针，再从右向左，所以a.x有 {n:1, x:null}, b.x 相同
-4. a points to {n:2}
-5. a.x, {n:1, x=null}, points to {n:2} and becomes {n:1, x:{n:2}}, which b points to
+2. b points to a, the same, {n:1}
+3. "." operation has the highest priority, so a.x (x:undefined) added to {n:1} ({n:1, x:null})
+4. perform the operation from right to left: a points to {n:2}
+5. a.x (still {n:1, x:null}) points to {n:2} (current a) and becomes {n:1, x:{n:2}}, which b already points to
 
 ## Functions
 1. Function expression: var fun = function() {...}; parsed when executed, cannot be hoisted
