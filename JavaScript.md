@@ -27,21 +27,89 @@ Lift declaration to the top (not initialization)
 3. Session cookies: live until the WINDOW is closed. Plain text for user, encrypted on only https. Cookies will be sent everytime a user sends a request, so try to avoid overloading it. Put authentication in cookies. Plain text for user, encrypted on only https. 
 
 ## Operation 
+
+1. `undefined` means there is nothing, not even `null`
+2. Object通过它的toString方法被强制转换为字符串,通过它的valueOf方法被强制转换为数字。带有valueOf方法的Object应该实现一个toString方法,这个toString方法返回的字符串就是那个valueOf返回的数字的字符串表示形式:
+    ```
+    var obj = {
+        toString: function() {
+            return 'obj';
+        },
+        valueOf: function() {
+            return 1;
+        }
+    };
+
+    console.log(1 + obj); // 2
+    console.log('Hi' + obj); // Hi1
+    ```
+3. 判断一个值是否是未定义的应该使用typeof或者比较的方法,而不是根据这个值表现是true或者false来判断, because true is taken as 1, false is taken as 0
+    ```
+    function point(x, y) {
+        if(typeof x === undefined || y === undefined) {
+            return {
+                x: x || 1,
+                y: y || 1
+            }
+        }
+        return {
+            x: x,
+            y: y
+        }
+    }
+    console.log(point(0, 0)); // { x: 0, y: 0 }
+    ```
+
+1. 01 + "05" = 105 (string)
+2. "01" + 05 = 015 (string)
+3. 10 + null or null + 10 = 10
+4. "test" + null or null + "test" = "testnull" or "nulltest"
+5. 10 + true = 11
+6. 10 + false = 10 
+7. isNaN({} / undefined / NaN / 'foo' / {valueOf: 'foo'}) all true
+8. Divide by 0 will give Infinity
+9. 8 | 1 = 9
+
+
 ```
-//Same as Java (+)
+// Same as Java (+)
 "a" + 1 + 2 // a12
 1 + 2 + "a" // 3a
 
-//Different from Java (-, *, /)
+// Different from Java (-, *, /)
 1 - "2" // -1        
 "2" - "1" // 1
 "100" / 10 // 10
 "10" * "10" // 100
 ```
-1. 01 + "05" = 105 (string)
-2. "01" + 05 = 015 (string)
-3. undefined & null: == true, === false
-4. Divide by 0 will also give Infinity
+
+
+#### Equal Sign
+1. 当使用==操作符进行相等的比较操作的时候,如果它的两个参数的类型是不一样的; 那么==会把它们先强制转换为相同类型参数,然后再进行比较
+2. 使用===表明你的比较不会涉及任何的隐形的类型转换
+3. 当对不同类型的数据进行比较的时候,你要首先把它们进行显示的类型转换。 然后再进行比较,这样会使你的程序更加清晰
+
+    |     Argument Type 1     |     Argument Type 2     |     Coercions     |
+    | ----------------------- | ------------------------| ------------------|
+    | null                    | undefined               | None; always true |
+    | null or undefined       | Anything other than null or undefined | None; always false |
+    | Primitive string, number, or boolean | Date object | Primitive => number, Date object => primitive (try toString and then valueOf) |
+    | Primitive string, number, or boolean | Non-Date object | Primitive => number, non-Date object => primitive (try valueOf and then toString) |
+    | Primitive string, number, or boolean | Primitive string, number, or boolean | Primitive => number |
+
+    Example of: primitive => number example
+    ```
+    var y = {valueOf: function() {return "3"}}; 
+    y == 3 // true
+    y === 3 // false
+
+    var price = "15";
+    console.log(+price === 15); // true
+    ```
+
+4. NaN == NaN, NaN === NaN, both false
+5. {} == {}, {} === {}, both true
+6. null == null, null === null, both true
 
 ## Array
 ```
@@ -62,7 +130,7 @@ array.forEach(function(color) { // anonymous function
 for (x in person)
 3. const: cannot be reassigned but can be changed (e.g. array)
 
-[Pointer example](https://www.cnblogs.com/huaan011/p/4381703.html)
+[Pointer example](http://www.cnblogs.com/vajoy/p/3703859.html)
 ```
 var a = {n:1};
 var b = a;
@@ -76,11 +144,17 @@ b.x; // {n: 2}
 4. perform the operation from right to left: a points to {n:2}
 5. a.x (still {n:1, x:null}) points to {n:2} (current a) and becomes {n:1, x:{n:2}}, which b already points to
 
+#### undefined v.s null 
+1. undefined == null? true, undefined === null? false
+2. undefined is invalid as default parameter, null is valid
+
+
 ## Functions
 1. Function expression: var fun = function() {...}; parsed when executed, cannot be hoisted
 2. Function declaration: function fun() {...}; parsed when encountered, can be hoisted
 3. Immediately Invoked Function Expression (self-executing anonymous function): avoid variable hoisting
 https://www.tutorialspoint.com/es6/es6_functions.htm
+4. Rest parameter: only one allowed, as last parameter
 
 ### Generator function
 ```
@@ -96,8 +170,7 @@ console.log(it.next('Cricket'));
 ```
 
 ### Arrow Function 
-// Parenthesize the body of function to return an object literal expression:
-params => ({foo: bar}) 
+1. Parenthesize the body of function to return an object: `params => ({foo: bar})`
 
 ## Object
 JavaScript objects cannot be compared, use JSON or loop the properties
