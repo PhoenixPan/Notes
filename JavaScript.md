@@ -18,10 +18,43 @@ for (var i = 0; i < cars.length; i++) {
 ```
 
 ## Basics
-#### Hoisting
-Lift declaration to the top (not initialization)
+### Hoisting
+Lift **declaration** to the top (not initialization)
 
-#### Storage
+#### Example 1
+```
+var x = 5;
+
+(function () {
+    console.log(x);
+    var x = 10;
+    console.log(x); 
+})();
+```
+is equal to 
+```
+var x = 5;
+
+(function () {
+    var x;
+    console.log(x);
+    x = 10;
+    console.log(x); 
+})();
+```
+
+#### Example 2
+```
+var x = y, y = 'A';
+console.log(x + y); // undefinedA
+```
+```
+var x = y, y = 'A';
+console.log(y);     
+console.log(x + y); // undefinedA
+```
+
+### Storage
 1. Window.localStorage: across session
 2. Window.sessionStorage: live for one session, refresh is ok, die upon closing tab
 3. Session cookies: live until the WINDOW is closed. Plain text for user, encrypted on only https. Cookies will be sent everytime a user sends a request, so try to avoid overloading it. Put authentication in cookies. Plain text for user, encrypted on only https. 
@@ -84,7 +117,7 @@ Lift declaration to the top (not initialization)
 ```
 
 
-#### Equal Sign
+### Equal Sign
 1. 当使用==操作符进行相等的比较操作的时候,如果它的两个参数的类型是不一样的; 那么==会把它们先强制转换为相同类型参数,然后再进行比较
 2. 使用===表明你的比较不会涉及任何的隐形的类型转换
 3. 当对不同类型的数据进行比较的时候,你要首先把它们进行显示的类型转换。 然后再进行比较,这样会使你的程序更加清晰
@@ -126,9 +159,15 @@ array.forEach(function(color) { // anonymous function
 
 ## Variables 
 1. Undeclared variables: implicit globals
-2. let: limits to block. It is not available using "var", which only limits to functions.
-for (x in person)
-3. const: cannot be reassigned but can be changed (e.g. array)
+2. const: cannot be reassigned but can be changed (e.g. array)
+3. null is explicit empty. var person = null The value of person is null but typeof person is object, which is considered a bug
+4. You can re-declare a variable. If you don't assign a new value, it will keep the old one:
+    ```
+    var carName = "Volvo";
+    var carName;  // still "Vovlo"
+    ```
+5. Lifetime: Local variables are deleted when the code block is completed; Global variables are deleted when you close the page
+6. The global scope is the window object, all global variables belong to it: window.myVar
 
 [Pointer example](http://www.cnblogs.com/vajoy/p/3703859.html)
 ```
@@ -144,11 +183,74 @@ b.x; // {n: 2}
 4. perform the operation from right to left: a points to {n:2}
 5. a.x (still {n:1, x:null}) points to {n:2} (current a) and becomes {n:1, x:{n:2}}, which b already points to
 
-#### undefined v.s null 
+
+### undefined v.s null 
 1. undefined == null? true, undefined === null? false
 2. undefined is invalid as default parameter, null is valid
 
 
+### NaN - Not a Number
+1. Type is number.
+2. Operate a number with non-numeric string: `var x = 100 / "Apple"`;
+3. Operate a number with a NaN
+    ```
+    var x = NaN, y = 5;
+    var z = x + y;   
+    ```
+4. Operate a number with an undefined value
+    ```
+    var x, y = 5;
+    var z = x + y;         
+    ```
+5. Operate two non-numeric values: `"Hello" - "Dolly"`
+6. Operate a string with a NaN
+    ```
+    var x = NaN, var y = "5";
+    var z = x + y;  // z = NaN5
+    ```
+
+### let
+1. `let` allows you to limit the scope to the block, statement, or expression on which it is used, unlike var, which defines variables for at least the scope of a function
+    ```
+    function varTest() {
+    var x = 1;
+    if (true) {
+        var x = 2;  // same variable!
+        console.log(x);  // 2
+    }
+    console.log(x);  // 2
+    }
+
+    function letTest() {
+    let x = 1;
+    if (true) {
+        let x = 2;  // different variable
+        console.log(x);  // 2
+    }
+    console.log(x);  // 1
+    }
+    ```
+2. `let` does not create a property on the global object (window)
+    ```
+    var x = 'global';
+    let y = 'global';
+    console.log(this.x); // global
+    console.log(this.y); // undefined
+    ```
+3. `let` cannot declared multiple times, it will raise syntax error. 'seitch' is considered as one block, there should be no duplicated 'let' in it.
+    ```
+    let a = 5;
+    let a = 6; // Uncaught SyntaxError: Identifier 'a' has already been declared
+    ```
+4. `let` will hoist, it will be in a "dead zone", so referring it before declaration will cause ReferenceError: not defined
+```
+console.log(a)
+let a = 6; // Uncaught ReferenceError: a is not defined
+```
+```
+let a;
+console.log(a) // undefined
+```
 ## Functions
 1. Function expression: var fun = function() {...}; parsed when executed, cannot be hoisted
 2. Function declaration: function fun() {...}; parsed when encountered, can be hoisted
@@ -173,7 +275,7 @@ console.log(it.next('Cricket'));
 1. Parenthesize the body of function to return an object: `params => ({foo: bar})`
 
 ## Object
-JavaScript objects cannot be compared, use JSON or loop the properties
+1. JavaScript objects cannot be compared, (x == y) is always false, use JSON or loop the properties
 
 ### Inheritance
 ```
