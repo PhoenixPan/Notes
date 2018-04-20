@@ -1,22 +1,15 @@
 # Javascript
 
-## Uncategorized
-```
-var cars = [
-    {make:"BMW", model:"X5"},
-    {make:"Benz", model:"385"}
-];
+- [Basics](#Basics)
+- [Operation](#Operation)
+- [Variables](#Variables)
+- [Functions](#Functions)
+- [Object](#Object)
+- [PrototypeChain](#PrototypeChain)
+- [Closure](#Closure)
 
-for (var i = 0; i < cars.length; i++) {
-	(function(i) {
-    	this.print = function() {
-        	console.log("Make:" + this.make + ", model:" + this.model);
-		};
-		this.print();
-	}).call(cars[i], i);
-}
-```
 
+<a id="Basics"></a>  
 ## Basics
 ### Hoisting
 Lift **declaration** to the top (not initialization)
@@ -59,6 +52,7 @@ console.log(x + y); // undefinedA
 2. Window.sessionStorage: live for one session, refresh is ok, die upon closing tab
 3. Session cookies: live until the WINDOW is closed. Plain text for user, encrypted on only https. Cookies will be sent everytime a user sends a request, so try to avoid overloading it. Put authentication in cookies. Plain text for user, encrypted on only https. 
 
+<a id="Operation"></a>  
 ## Operation 
 
 1. `undefined` means there is nothing, not even `null`
@@ -91,6 +85,12 @@ console.log(x + y); // undefinedA
         }
     }
     console.log(point(0, 0)); // { x: 0, y: 0 }
+    ```
+    if num is 0, value becomes 10 instead of 0, as 0 is evaluated "false"
+    ```
+    function(num) {
+    var value = num || 10;
+    }
     ```
 
 1. 01 + "05" = 105 (string)
@@ -144,19 +144,8 @@ console.log(x + y); // undefinedA
 5. {} == {}, {} === {}, both true
 6. null == null, null === null, both true
 
-## Array
-```
-array.join(" "); // get all elements concatenated on space
-var array = [1,2,3];
-var array  = new Array(1,2,3);
-array.shift/unshift()   pop/peek the head
-array.slice(start, end)
-array.splice(index, numberOfElementsToRemove,( newItemsToBeAdded));
-array.forEach(function(color) { // anonymous function
-  console.log(color);
-});
-```
 
+<a id="Variables"></a>  
 ## Variables 
 1. Undeclared variables: implicit globals
 2. const: cannot be reassigned but can be changed (e.g. array)
@@ -183,6 +172,18 @@ b.x; // {n: 2}
 4. perform the operation from right to left: a points to {n:2}
 5. a.x (still {n:1, x:null}) points to {n:2} (current a) and becomes {n:1, x:{n:2}}, which b already points to
 
+### Array
+```
+array.join(" "); // get all elements concatenated on space
+var array = [1,2,3];
+var array  = new Array(1,2,3);
+array.shift/unshift()   pop/peek the head
+array.slice(start, end)
+array.splice(index, numberOfElementsToRemove,( newItemsToBeAdded));
+array.forEach(function(color) { // anonymous function
+  console.log(color);
+});
+```
 
 ### undefined v.s null 
 1. undefined == null? true, undefined === null? false
@@ -251,6 +252,8 @@ let a = 6; // Uncaught ReferenceError: a is not defined
 let a;
 console.log(a) // undefined
 ```
+
+<a id="Functions"></a>  
 ## Functions
 1. Function expression: var fun = function() {...}; parsed when executed, cannot be hoisted
 2. Function declaration: function fun() {...}; parsed when encountered, can be hoisted
@@ -274,6 +277,45 @@ console.log(it.next('Cricket'));
 ### Arrow Function 
 1. Parenthesize the body of function to return an object: `params => ({foo: bar})`
 
+### `call` Keyword
+```
+var cars = [
+    {make:"BMW", model:"X5"},
+    {make:"Benz", model:"385"}
+];
+
+for (var i = 0; i < cars.length; i++) {
+	(function(i) {
+    	this.print = function() {
+        	console.log("Make:" + this.make + ", model:" + this.model);
+		};
+		this.print();
+	}).call(cars[i], i);
+}
+```
+
+### High-order Function
+1. High-order function: takes another function as an argument, or that returns a function as a result.
+2. Callback function: a function that gets executed at the end of an operation, once all of the other operations of been completed. Thanks to JS's single-thread nature. The ability to pass a callback function is critical when dealing with resources that may return a result after an undetermined period of time.
+
+```
+var attitude = function(original, replacement) {
+  return function(source) {
+    return source.replace(original, replacement);
+  };
+};
+
+var snakify = attitude(/millenials/ig, "Snake People");
+var hippify = attitude(/baby boomers/ig, "Aging Hippies");
+
+console.log(snakify("The Millenials are always up to something."));
+// The Snake People are always up to something.
+console.log(hippify("The Baby Boomers just look the other way."));
+// The Aging Hippies just look the other way.
+```
+
+
+<a id="Object"></a>  
 ## Object
 1. JavaScript objects cannot be compared, (x == y) is always false, use JSON or loop the properties
 
@@ -297,8 +339,8 @@ function Toy(name, price) {
 var cheese = new Food('feta', 5, "food");
 var fun = new Toy('robot', 40);
 ```
-
-### Prototype Chain
+<a id="PrototypeChain"></a>  
+## Prototype Chain
 ``` 
 Object.create()
 var o = {
@@ -312,6 +354,7 @@ console.log(o.m()); // 3
 var p = Object.create(o); // p is an object that inherits from o
 ```
 
+<a id="Closure"></a>  
 ## Closure
 
 1. Whenever you use function inside another function, a closure is used.
@@ -430,15 +473,18 @@ Using a regular expression literal, which consists of a pattern enclosed between
 var re = /exp/g;   // same as new RegExp('exp', 'g');
 ```
 
+i:	Perform case-insensitive matching  
+g:	Perform a global match (find all matches rather than stopping after the first match) m: Perform multiline matching  
+```
+var n = str.search(/mypattern/i);
+var n = str.search(/mypattern/i);
+
+/e/.test("The best things in life are free!"); // return true
+/e/.exec("The best things in life are free!"); // return match text if found, or null if not
+```
+
 ## CSS
 1. All children: X Y {color:blue;}
 2. All direct children: X > Y {color:blue;}
 3. Immediate sibling: X + Y {color:blue;}
 4. All preceding sibling: X ~ Y {color:blue;}
-
-## Trick
-```
-function(num) {
-  var value = num || 10; // if num is 0, value becomes 10 instead of 0, as 0 is evaluated "false"
-}
-```
