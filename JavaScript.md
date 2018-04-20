@@ -185,6 +185,10 @@ array.forEach(function(color) { // anonymous function
 });
 ```
 
+1. `forEach(function callback(task[, index][, array]))`: process each element
+2. `map(function callback(task[, index][, array]))`: process each element and return the array
+3. `filter(function callback(task[, index][, array]))`: get elements matching the filter
+
 ### undefined v.s null 
 1. undefined == null? true, undefined === null? false
 2. undefined is invalid as default parameter, null is valid
