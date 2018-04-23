@@ -188,6 +188,7 @@ array.forEach(function(color) { // anonymous function
 1. `forEach(function callback(task[, index][, array]))`: process each element
 2. `map(function callback(task[, index][, array]))`: process each element and return the array
 3. `filter(function callback(task[, index][, array]))`: get elements matching the filter
+4. `reduce(function callback(accumulator, currentValue[, index][,array])[, initial])`: 
 
 ### undefined v.s null 
 1. undefined == null? true, undefined === null? false
@@ -282,6 +283,33 @@ console.log(it.next('Cricket'));
 1. Parenthesize the body of function to return an object: `params => ({foo: bar})`
 
 ### `call` Keyword
+1. Allow object to use others' functions
+2. Define the invoker of functions
+3. We pass the caller of the function as the first param, but it's optional  
+    `function.call([this][, arg1][, arg2],...)`
+    if it's not passed, "this" is bound to global object 
+
+
+#### Example 1
+```
+var obj1 = {
+    sayHello: function(msg) {
+        console.log("Hello," + this.name + " " + msg);
+    },
+    name: "John"
+};
+
+var obj2 = {
+    name: "Mary"
+};
+
+var name = "global"
+
+obj1.sayHello.call(obj2, "haha"); // Hello, Mary haha
+obj1.sayHello.call("haha") // Hello, undefined undefined
+obj1.sayHello.call() // Hello, global undefined
+```
+#### Example 2
 ```
 var cars = [
     {make:"BMW", model:"X5"},
@@ -345,6 +373,34 @@ var fun = new Toy('robot', 40);
 ```
 <a id="PrototypeChain"></a>  
 ## Prototype Chain
+1. prototype: Only in functions.
+2. getPrototypeOf: 
+3. `__proto__`: 
+    1. Available for all objects. 
+    2. Links to prototype dynamically. 
+    3. Never modify it. 
+    `__proto__` is the actual object that is used in the lookup chain to resolve methods, etc. prototype is the object that is used to build _`__proto__` when you create an object with new:
+
+
+```
+function User(name) {
+    this.name = name;
+}
+var user1 = new User("User 1");
+var user2 = new User("User 2");
+
+// prototype is not available in objects but in their contructor
+user1.__proto__ === User.prototype 
+user1.__proto__ === user1.__proto__.constructor.prototype
+user1.prototype === undefined
+
+User.prototype.ago = 20;
+user1.age; // 20
+
+User.prototype is found in the proto chain of the user1 object
+Object.getPrototypeOf(user1) === User.prototype // true 
+```
+
 ``` 
 Object.create()
 var o = {
@@ -357,6 +413,8 @@ var o = {
 console.log(o.m()); // 3
 var p = Object.create(o); // p is an object that inherits from o
 ```
+
+https://stackoverflow.com/questions/650764/how-does-proto-differ-from-constructor-prototype
 
 <a id="Closure"></a>  
 ## Closure
