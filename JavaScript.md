@@ -144,6 +144,10 @@ console.log(x + y); // undefinedA
 5. {} == {}, {} === {}, both true
 6. null == null, null === null, both true
 
+### for loop
+1. `for-in` loops through the **enumerable** property names of an object, not the indexes of an array. Avoid it in iteration, it will include `Array.prototype.foo`.
+2. old-fashioned indexing: low efficiency in sparse arraies (a[0], a[99999])
+3. `for each`: recommended
 
 <a id="Variables"></a>  
 ## Variables 
@@ -189,6 +193,11 @@ array.forEach(function(color) { // anonymous function
 2. `map(function callback(task[, index][, array]))`: process each element and return the array
 3. `filter(function callback(task[, index][, array]))`: get elements matching the filter
 4. `reduce(function callback(accumulator, currentValue[, index][,array])[, initial])`: 
+    ```
+    function combine(...arrays) {
+     return arrays.reduce((previous, current) => {return previous.concat(current);}, [0]);
+    }
+    ```
 
 ### undefined v.s null 
 1. undefined == null? true, undefined === null? false
@@ -264,7 +273,7 @@ console.log(a) // undefined
 2. Function declaration: function fun() {...}; parsed when encountered, can be hoisted
 3. Immediately Invoked Function Expression (self-executing anonymous function): avoid variable hoisting
 https://www.tutorialspoint.com/es6/es6_functions.htm
-4. Rest parameter: only one allowed, as last parameter
+4. Rest parameter (...args): only one allowed, as the last parameter. All rest params will be wrapped in an array
 
 ### Generator function
 ```
