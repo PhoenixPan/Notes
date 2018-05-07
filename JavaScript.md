@@ -7,7 +7,7 @@
 - [Object](#Object)
 - [PrototypeChain](#PrototypeChain)
 - [Closure](#Closure)
-- [Promise](#Promise)
+
 
 
 <a id="Basics"></a>  
@@ -539,47 +539,6 @@ for(var i = 0; i < 5; i++) {
 }
 ```
 
-<a id="Promise"></a>  
-## Promise
-```
-'use strict';
-var promiseCount = 0;
-function testPromise() {
-    let thisPromiseCount = ++promiseCount;
-    console.log("Sync starts: " + thisPromiseCount)
-
-    let p1 = new Promise(
-        // The resolver function is called with the ability to resolve or reject the promise
-       (resolve, reject) => {
-            console.log("Async starts: " + thisPromiseCount);
-            window.setTimeout(function() { resolve(thisPromiseCount);}, 1000);
-        }
-    );
-
-    // We define what to do when the promise is resolved with the then() call,
-    // and what to do when the promise is rejected with the catch() call
-    p1.then(
-        function(fulfillment) {
-            console.log("Async ends: " + fulfillment);
-        })
-    .catch(
-       (reason) => {
-            console.log('Handle rejected promise ('+ reason +') here.');
-        });
-
-    console.log("Sync ends: " + thisPromiseCount)
-}
-
-testPromise();
-```
-
-
-#### fetch
-Use ES6 fetch API, which return a promise
-```
- const promise = fetch(`http://www.example.com?num1=${num1}&num2=${num2}`)
-        .then(x => x.json());
-```
 ## Regex
 Using a regular expression literal, which consists of a pattern enclosed between slashes, as follows:
 ```
