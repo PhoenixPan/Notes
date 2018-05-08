@@ -5,8 +5,9 @@
 - [Variables](#Variables)
 - [Functions](#Functions)
 - [Object](#Object)
-- [PrototypeChain](#PrototypeChain)
+- [Prototype Chain](#PrototypeChain)
 - [Closure](#Closure)
+- [Error Handling](#ErrorHandling)
 
 
 
@@ -538,6 +539,71 @@ for(var i = 0; i < 5; i++) {
     }, 1000);
 }
 ```
+<a id="ErrorHandling"></a>  
+## Error Handling
+1. Most common usage: 
+    ```
+    throw new Error("Please enter a valid value.");
+    ```
+
+2. `throw` anything from string, number, bool, object. These are all valid: 
+    ```
+    throw "An error has occurred";
+    throw 6;
+    throw true;
+    throw new Date();
+    ```  
+    However, not all browsers handle it well. So it's better to stick with `new Error(whatever)`  
+
+3. Throw a generic Error object: `throw {name: "Major failure", message: "Detected in ..."}` 
+
+### Handle different types of errors
+
+| Error type              | Error detail            |
+| ----------------------- | ------------------------| 
+Error | base type for all errors. Never actually thrown by the engine.
+EvalError | thrown when an error occurs during execution of code via eval()
+RangeError | thrown when a number is outside the bounds of its range. For example, trying to create an array with -20 items (new Array(-20)). These occur rarely during normal execution.
+ReferenceError | thrown when an object is expected but not available, for instance, trying to call a method on a null reference.|
+SyntaxError | thrown when the code passed into eval() has a syntax error.
+TypeError | thrown when a variable is of an unexpected type. For example, new 10 or "prop" in true.|
+URIError | thrown when an incorrectly formatted URI string is passed into encodeURI, encodeURIComponent, decodeURI, or decodeURIComponent.
+
+
+```
+try {
+  throw new Date(); // not an Error type
+} catch(err) {
+  console.log(err);
+  if (err instanceof Date) {
+	console.log(err.message); 
+  } else if (err instanceof ReferenceError){
+    //handle the error
+  } else if (err instanceof TypeError){
+    //handle the error
+  } else {
+    //handle all others
+}
+```
+### Create your own Error type
+```
+function MyError(message){
+    this.message = message;
+}
+MyError.prototype = new Error();
+
+try {
+  throw new MyError("error message");
+} catch(err) {
+  console.log(err.name); // Error
+  console.log(err.message); // error message
+}
+```
+
+#### References
+1. [The Error object and throwing your own errors](http://www.javascriptkit.com/javatutors/trycatch2.shtml)
+2. [The art of throwing JavaScript errors](https://www.nczonline.net/blog/2009/03/10/the-art-of-throwing-javascript-errors-part-2/)
+
 
 ## Regex
 Using a regular expression literal, which consists of a pattern enclosed between slashes, as follows:
