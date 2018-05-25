@@ -277,19 +277,6 @@ console.log(a) // undefined
 https://www.tutorialspoint.com/es6/es6_functions.htm
 4. Rest parameter (...args): only one allowed, as the last parameter. All rest params will be wrapped in an array
 
-### Generator function
-```
-function* ask() { 
-   const name = yield "What is your name?"; 
-   const sport = yield "What is your favorite sport?"; 
-   return `${name}'s favorite sport is ${sport}`; 
-}  
-const it = ask(); 
-console.log(it.next()); 
-console.log(it.next('Ethan'));  
-console.log(it.next('Cricket')); 
-```
-
 ### Arrow Function 
 1. Parenthesize the body of function to return an object: `params => ({foo: bar})`
 

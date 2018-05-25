@@ -1,12 +1,14 @@
-- [Promise](#Promise)
+- [Promise](#promise)
+- [Generator](#generator)
 - [await](#await)
 
-<a id="Promise"></a>  
+
+<a id="promise"></a>  
 ## Promise
 ### Why do we use Promise?
 1. Enable easier async
 2. Avoid callback hall, flatten with `.then()`
-3. Get back the control
+3. Mitigrate inversion of Control
 
 ### Basics
 1. `catch(reject)` is a syntax suger for `then(undefined, reject)`
@@ -156,6 +158,43 @@ getJSON("https://httpbin.org/get").then(function(response) {
   console.error('Oops!', error);
 });
 ```
+
+<a id="generator"></a>  
+## Generator
+1. Return a Generator object to iterator
+2. First call of `next()` executes until the first `yield` statement
+  ```
+  function* logGenerator() {
+    console.log(0, yield);
+    console.log(1, yield);
+    console.log(2, yield);
+  }
+
+  var gen = logGenerator();
+
+  gen.next('zika');
+  gen.next('pretzel');
+  gen.next('california');
+  gen.next('mayonnaise');
+
+  // 0 "pretzel"
+  // 1 "california"
+  // 2 "mayonnaise"
+  ```
+3. Execution ends with `return;`
+
+```
+function* ask() { 
+   const name = yield "What is your name?"; 
+   const sport = yield "What is your favorite sport?"; 
+   return `${name}'s favorite sport is ${sport}`; 
+}  
+const it = ask(); 
+console.log(it.next()); 
+console.log(it.next('Ethan'));  
+console.log(it.next('Cricket')); 
+```
+
 
 <a id="await"></a>  
 ## await
