@@ -4,11 +4,11 @@
 - [Operation](#Operation)
 - [Variables](#Variables)
 - [Functions](#Functions)
+- [Array](#Array)
 - [Object](#Object)
 - [Prototype Chain](#PrototypeChain)
 - [Closure](#Closure)
 - [Error Handling](#ErrorHandling)
-
 
 
 <a id="Basics"></a>  
@@ -178,29 +178,6 @@ b.x; // {n: 2}
 4. perform the operation from right to left: a points to {n:2}
 5. a.x (still {n:1, x:null}) points to {n:2} (current a) and becomes {n:1, x:{n:2}}, which b already points to
 
-### Array
-```
-array.join(" "); // get all elements concatenated on space
-var array = [1,2,3];
-var array  = new Array(1,2,3);
-array.shift/unshift()   pop/peek the head
-array.slice(start, end)
-array.splice(index, numberOfElementsToRemove,( newItemsToBeAdded));
-array.forEach(function(color) { // anonymous function
-  console.log(color);
-});
-```
-
-1. `forEach(function callback(task[, index][, array]))`: process each element
-2. `map(function callback(task[, index][, array]))`: process each element and return the array
-3. `filter(function callback(task[, index][, array]))`: get elements matching the filter
-4. `reduce(function callback(accumulator, currentValue[, index][,array])[, initial])`: 
-    ```
-    function combine(...arrays) {
-     return arrays.reduce((previous, current) => {return previous.concat(current);}, [0]);
-    }
-    ```
-
 ### undefined v.s null 
 1. undefined == null? true, undefined === null? false
 2. undefined is invalid as default parameter, null is valid
@@ -343,6 +320,76 @@ console.log(snakify("The Millenials are always up to something."));
 console.log(hippify("The Baby Boomers just look the other way."));
 // The Aging Hippies just look the other way.
 ```
+
+
+<a id="Array"></a>  
+## Array
+```
+array.join(" "); // get all elements concatenated on space
+var array = [1,2,3];
+var array  = new Array(1,2,3);
+array.shift/unshift()   pop/peek the head
+array.slice(start, end)
+array.splice(index, numberOfElementsToRemove,( newItemsToBeAdded));
+array.forEach(function(color) { // anonymous function
+  console.log(color);
+});
+```
+
+1. `forEach(function callback(task[, index][, array]))`: process each element
+2. `map(function callback(task[, index][, array]))`: process each element and return the array
+3. `filter(function callback(task[, index][, array]))`: get elements matching the filter
+4. `reduce(function callback(accumulator, currentValue[, index][,array])[, initial])`: 
+    ```
+    function combine(...arrays) {
+     return arrays.reduce((previous, current) => {return previous.concat(current);}, [0]);
+    }
+    ```
+
+5. `splice()`:  
+    var nums = [1, 2, 3, 4];
+    1. `splice(startIndex)`: nums.splice(2); //return [3, 4], nums = [1, 2]
+    2. `splice(startIndex, deleteCount)`: nums.splice(2, 1); //return [3], nums = [1, 2, 4]
+    3. `splice(startIndex, deleteCount, ...[values])`:  
+        nums.splice(2, 1, ...[5, 6]); // return [3], nums = [1, 2, 5, 6, 4]
+
+
+### Rest parameters and Spread operator 
+1. Looks the same `...array`
+2. Rest parameters (array instance): allows us to represent an indefinite number of arguments as an array
+    ```
+    function sum(a, b) {
+        return a + b;
+    }
+    console.log( sum(1, 2, 3, 4, 5) ); // 3, but no error
+
+    var sumAll = (...args) => { 
+        let sum = 0;
+        for (let arg of args) sum += arg;
+        return sum;
+    }
+    console.log( sum(1, 2, 3, 4, 5) ); // 15
+    ```
+    Difference between `arguments` object and rest param:
+    1. `arguments` is both array-like and iterable, but still not an array, so we can't use array functions on it
+    2. `arguments` does not exist in arrow functions
+    3. `arguments` contains all params, rest param contains only undefined params
+
+
+3. Spread operator: turns an iterable (String, Array, Map, Set, ...) into arguments of a function or into elements of an array
+    ```
+    Math.max(...array);
+    array1.push(...array2);
+    [1, ...[2,3], 4]; // [1,2,3,4]
+    const arr = [...array1, ...array2, ...array3]
+    ```
+    Difference between `Array.from()` and spread operator:
+    1. `Array.from()` operates on both array-likes and iterables, but the spread operator operates only on iterables
+    2. `Array.from()` generates an array strictly: [1, Array.from([2,3]), 4] ---> [1, [2, 3], 4]
+
+
+[Rest parameters and spread operator](https://javascript.info/rest-parameters-spread-operator)  
+[Rest parameters MDN](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Functions/rest_parameters)
 
 
 <a id="Object"></a>  
