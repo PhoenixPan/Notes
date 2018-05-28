@@ -7,7 +7,7 @@
 ## Promise
 ### Why do we use Promise?
 1. Enable easier async
-2. Avoid callback hall, flatten with `.then()`
+2. Avoid callback hell, flatten with `.then()`
 3. Mitigrate inversion of Control
 
 ### Basics
@@ -17,12 +17,12 @@
 ```
 var promiseCount = 0;
 function testPromise() {
-    let thisPromiseCount = ++promiseCount;
-    console.log("Sync starts: " + thisPromiseCount)
+    ++promiseCount;
+    console.log("Sync starts: " + promiseCount)
 
     let myPromise = new Promise((resolve, reject) => {
-            console.log("Async starts: " + thisPromiseCount);
-            window.setTimeout(function() { resolve(thisPromiseCount);}, 1000);
+            console.log("Async starts: " + promiseCount);
+            window.setTimeout(function() { resolve(promiseCount);}, 1000);
         }
     );
 
@@ -36,9 +36,10 @@ function testPromise() {
             console.log('Handle rejected promise ('+ reason +') here.');
         });
 
-    console.log("Sync ends: " + thisPromiseCount)
+    console.log("Sync ends: " + promiseCount)
 }
 
+testPromise();
 testPromise();
 ```
 
@@ -85,7 +86,7 @@ wait(200)
 
 ### Error handling
 #### Why do we need `catch()`
-Bad code! error in handleSuccess will be swallowed. Use catch (then(null, error))
+Bad code! In this example, error in handleSuccess will be swallowed:
 ```
 save().then(
   handleSuccess,
@@ -103,7 +104,7 @@ save().then(
 ;
 ```
 
-#### Order of handling  
+#### Order of error handling  
 ```
 var mypromise = new Promise((res, rej) => {
 	rej("Error1"); // catch Error1
