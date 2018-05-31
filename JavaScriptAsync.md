@@ -1,6 +1,7 @@
 - [Promise](#promise)
 - [Generator](#generator)
 - [await](#await)
+- [fetch](#fetch)
 
 
 <a id="promise"></a>  
@@ -8,12 +9,29 @@
 ### Why do we use Promise?
 1. Enable easier async
 2. Avoid callback hell, flatten with `.then()`
-3. Mitigrate inversion of Control
+3. Mitigrate Inversion of Control (IOC)
 
-### Basics
-1. `catch(reject)` is a syntax suger for `then(undefined, reject)`
+Promise should be treated as a blackbox, only the function responsible for creating the promise should know the promise status and have access to resolve/reject functions.
 
-#### Basic example  
+Promise constructor takes a function, which takes two parameters: `resolve()` and `reject()`. You can optionally `resolve(value)` or `reject(value)` with values, which will be passed to the callback functions attached with `then()` or `catch()` when the promise is **settled**. Promise status and its value must not change once it's settled. 
+
+```
+promise.then(
+  onFulfilled?: Function,
+  onRejected?: Function
+) => Promise
+```
+
+The `then()` method:
+1. `then()` returns a new promise
+2. `catch(reject)` is a syntax suger for `then(undefined, reject)`
+3. If the arguments supplied to `then()` are not functions, this `then()` will be ignored and returns the same promise
+4. Both `onFulfilled()` and `onRejected()` are optional
+5. `onFulfilled()` called if fulfilled, with the promise's value as the first argument
+6. `onRejected()` called if rejected, with the reason for rejection as the first argument, use Error objects to catch
+
+[Reference: What is Promise](https://medium.com/javascript-scene/master-the-javascript-interview-what-is-a-promise-27fc71e77261)
+#### Example  
 ```
 var promiseCount = 0;
 function testPromise() {
@@ -42,11 +60,15 @@ function testPromise() {
 testPromise();
 testPromise();
 ```
-
-Abbreviated promise: could you still tell which one is which?  
 ```
 var testPromise = new Promise(res => res(1));
 testPromise.then(value => value * 2).then(v => console.log(v));
+```
+```
+function test() {
+  return Promise.resolve("Test");
+}
+var getPromise = test();
 ```
 
 ### Promise chaining
@@ -238,3 +260,12 @@ var result2 = promise2;
 console.log("completed");
 ```
 
+<a id="fetch"></a>  
+## Fetch
+1. Problems:
+  1. Error handling
+  2. Two steps required: `response.json()`
+  3. No timeout
+
+
+[Fetch vs Axios http request](https://medium.com/@sahilkkrazy/fetch-vs-axios-http-request-c9afa43f804e)
