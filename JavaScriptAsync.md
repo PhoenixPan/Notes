@@ -5,8 +5,8 @@
 
 
 <a id="promise"></a>  
-## Promise
-### Why do we use Promise?
+# Promise
+## Why do we use Promise?
 1. Enable easier async
 2. Avoid callback hell, flatten with `.then()`
 3. Mitigrate Inversion of Control (IOC)
@@ -25,108 +25,120 @@ promise.then(
 The `then()` method:
 1. `then()` returns a new promise
 2. `catch(reject)` is a syntax suger for `then(undefined, reject)`
-3. If the arguments supplied to `then()` are not functions, this `then()` will be ignored and returns the same promise
+3. If the arguments supplied to `then()` are not functions, this `then()` will be ignored and the chain will continue with the same promise:  
+  `myPromise.then(888) // => myPromise`
 4. Both `onFulfilled()` and `onRejected()` are optional
 5. `onFulfilled()` called if fulfilled, with the promise's value as the first argument
 6. `onRejected()` called if rejected, with the reason for rejection as the first argument, use Error objects to catch
 
 [Reference: What is Promise](https://medium.com/javascript-scene/master-the-javascript-interview-what-is-a-promise-27fc71e77261)
-#### Example  
-```
-var promiseCount = 0;
-function testPromise() {
-    ++promiseCount;
-    console.log("Sync starts: " + promiseCount)
 
-    let myPromise = new Promise((resolve, reject) => {
-            console.log("Async starts: " + promiseCount);
-            window.setTimeout(function() { resolve(promiseCount);}, 1000);
-        }
+## Examples
+1. Promise is async
+    ```
+    var promiseCount = 0;
+    function testPromise() {
+        ++promiseCount;
+        console.log("Sync starts: " + promiseCount)
+
+        let myPromise = new Promise((resolve, reject) => {
+                console.log("Async starts: " + promiseCount);
+                window.setTimeout(function() { resolve(promiseCount);}, 1000);
+            }
+        );
+
+        myPromise
+        .then(
+            function(fulfillment) { 
+                console.log("Async ends: " + fulfillment);
+            })
+        .catch(
+          (reason) => {
+                console.log('Handle rejected promise ('+ reason +') here.');
+            });
+
+        console.log("Sync ends: " + promiseCount)
+    }
+
+    testPromise();
+    testPromise();
+    ```
+2. Create a promise
+    ```
+    var testPromise = new Promise(res => res(1));
+    testPromise.then(value => value * 2).then(v => console.log(v));
+    ```
+    ```
+    function test() {
+      return Promise.resolve(1);
+    }
+    var testPromise = test();
+    testPromise.then(value => value * 2).then(v => console.log(v));
+    ```
+
+## Promise chaining
+### Examples
+1. Basic chaining behavior
+    ```
+    var wait = time => new Promise(
+      res => setTimeout(() => res(), time)
     );
 
-    myPromise
+    wait(200)
+      .then(() => new Promise(res => res('foo')))   // return a new promise p
+      .then(a => a) // this promise will assume the state of p and return a fulfilled promise with that value:
+      .then(b => console.log(b)) // 'foo'
+      .then(() => {throw new Error('foo');})
+      // When a promise is rejected, the resolve handler gets skipped
+      .then(                                                                     
+        d => console.log(`d: ${ d }`), // not logged
+        e => console.log(e)) // log the error: Error: foo
+      // With the previous exception handled, we can continue:
+      .then(f => console.log(`f: ${ f }`)) // f: undefined
+      .catch(e => console.log(e)) // not logged because there's no error
+      .then(() => { throw new Error('bar'); })
+      .then(g => console.log(`g: ${ g }`)) // not logged because of the 'bar' error
+      .catch(h => console.log(h)) // Error: bar
+    ;
+    ```
+
+    ```
+    wait(200)
+      .then(a => 300) //swallowed
+      .then(a => 500)
+      .then(b => console.log(b)) // 500
+      .then(c => console.log(c)) // undefined
+    ```
+
+2. `null` is a valid promise value:
+    ```
+    wait(200)
+      .then(() => null)
+      .then(n => console.log(n)) // null
+    ```
+
+3. End all promise chain with `catch()`. Why? Proper error handling.   
+    In this example, error in handleSuccess will be swallowed:
+    ```
+    save()
     .then(
-        function(fulfillment) { 
-            console.log("Async ends: " + fulfillment);
-        })
-    .catch(
-       (reason) => {
-            console.log('Handle rejected promise ('+ reason +') here.');
-        });
+      handleSuccess, // error swallowed here
+      handleError
+    );
+    // without catch()
+    ```
+    Now we allow different ways to handle different error
+    ```
+    save()
+    .then(
+        handleSuccess,
+        handleNetworkError
+      )
+    .catch(handleProgrammerError)
+    ;
+    ```
 
-    console.log("Sync ends: " + promiseCount)
-}
-
-testPromise();
-testPromise();
-```
-```
-var testPromise = new Promise(res => res(1));
-testPromise.then(value => value * 2).then(v => console.log(v));
-```
-```
-function test() {
-  return Promise.resolve("Test");
-}
-var getPromise = test();
-```
-
-### Promise chaining
-1. It's recommended to end all promise chain with `catch()`
-
-#### Basic example
-```
-var wait = time => new Promise(
-  res => setTimeout(() => res(), time)
-);
-
-wait(200)
-  .then(() => new Promise(res => res('foo')))   // onFulfilled() can return a new promise, `x`
-  .then(a => a) // the next promise will assume the state of `x`
-  // Above we returned the unwrapped value of `x`
-  // so `.then()` above returns a fulfilled promise with that value:
-  .then(b => console.log(b)) // 'foo'
-  // Note that `null` is a valid promise value:
-  .then(() => null)
-  .then(c => console.log(c)) // null
-  .then(() => {throw new Error('foo');}) // This error is not reported yet:
-  // Instead, the returned promise is rejected with the error as the reason:
-  .then(                                                                     
-    d => console.log(`d: ${ d }`), // Nothing is logged here due to the error above:
-    e => console.log(e)) // [Error: foo], now we handle the error (rejection reason)
-  // With the previous exception handled, we can continue:
-  .then(f => console.log(`f: ${ f }`)) // f: undefined
-  // The following doesn't log. e was already handled, so this handler doesn't get called:
-  .catch(e => console.log(e))
-  .then(() => { throw new Error('bar'); })
-  // When a promise is rejected, success handlers get skipped.
-  // Nothing logs here because of the 'bar' exception:
-  .then(g => console.log(`g: ${ g }`))
-  .catch(h => console.log(h)) // [Error: bar]
-;
-```
-
-### Error handling
-#### Why do we need `catch()`
-Bad code! In this example, error in handleSuccess will be swallowed:
-```
-save().then(
-  handleSuccess,
-  handleError
-);
-// without catch()
-```
-Ok! allow different ways to handle different error
-```
-save().then(
-    handleSuccess,
-    handleNetworkError
-  )
-  .catch(handleProgrammerError)
-;
-```
-
-#### Order of error handling  
+## Order of error handling  
 ```
 var mypromise = new Promise((res, rej) => {
 	rej("Error1"); // catch Error1
@@ -142,14 +154,14 @@ mypromise.then(
 )
 ```
 
-#### fetch
+## fetch
 Use ES6 fetch API, which return a promise
 ```
  const promise = fetch(`http://www.example.com?num1=${num1}&num2=${num2}`)
         .then(x => x.json());
 ```
 
-#### Promise with Ajax
+## Promise with Ajax
 ```
 var getJSON = function(url) {
   var promise = new Promise(function(resolve, reject){
@@ -183,7 +195,7 @@ getJSON("https://httpbin.org/get").then(function(response) {
 ```
 
 <a id="generator"></a>  
-## Generator
+# Generator
 1. Return a Generator object to iterator
 2. First call of `next()` executes until the first `yield` statement
   ```
@@ -220,10 +232,10 @@ console.log(it.next('Cricket'));
 
 
 <a id="await"></a>  
-## await
+# await
 1. `async functions` return promises, `await` awaits promises.
 
-### Basic
+## Basic
 ```
 function getPromise() {
 	return new Promise((resolve, reject) => {
@@ -245,7 +257,7 @@ async function resolvePromise() {
 var result = await resolvePromise();
 ```
 
-### Multiple async tasks
+## Multiple async tasks
 Preferred way:  
 ```
 var [result1, result2] = await Promise.all([resolvePromise(), resolvePromise()]);
