@@ -276,8 +276,24 @@ console.log("completed");
 ## Fetch
 1. Problems:
   1. Error handling
-  2. Two steps required: `response.json()`
-  3. No timeout
+      ```
+      fetch("http://httpstat.us/500")
+      .then(function() {
+          console.log("ok");
+      }).catch(function() {
+          console.log("error");
+      });
+      ```
+      fetch will only log error if there's a network error and log ok regardless a non-200 http response code. We could use `.ok` flag but still clumsy:
+      ```
+      .then(function(response) {
+        if (!response.ok) {
+            throw Error(response.statusText);
+        }
+      ```
+  2. Two steps to get response: `response.json()`
+  3. No timeout, no cancellation, no upload progress
+  4. No cookies by default
 
 
 [Fetch vs Axios http request](https://medium.com/@sahilkkrazy/fetch-vs-axios-http-request-c9afa43f804e)
