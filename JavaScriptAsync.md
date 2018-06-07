@@ -61,7 +61,8 @@ The `then()` method:
     testPromise();
     testPromise();
     ```
-2. Create a promise
+
+2. Ways to create a promise
     ```
     var testPromise = new Promise(res => res(1));
     testPromise.then(value => value * 2).then(v => console.log(v));
@@ -74,9 +75,15 @@ The `then()` method:
     testPromise.then(value => value * 2).then(v => console.log(v));
     ```
 
+3. `null` is a valid promise value:
+    ```
+    wait(200)
+      .then(() => null)
+      .then(n => console.log(n)) // null
+    ```
+
 ## Promise chaining
-### Examples
-1. Basic chaining behavior
+1. Basic
     ```
     var wait = time => new Promise(
       res => setTimeout(() => res(), time)
@@ -109,14 +116,8 @@ The `then()` method:
       .then(c => console.log(c)) // undefined
     ```
 
-2. `null` is a valid promise value:
-    ```
-    wait(200)
-      .then(() => null)
-      .then(n => console.log(n)) // null
-    ```
 
-3. End all promise chain with `catch()`. Why? Proper error handling.   
+2. End all promise chain with `catch()`. Why? Proper error handling.   
     In this example, error in handleSuccess will be swallowed:
     ```
     save()
@@ -144,7 +145,7 @@ The `then()` method:
     );
     ```
 
-4. Carrying an error will skip all `then()` that have no reject handling
+3. Carrying an error will skip all `then()` that have no reject handling
     ```
     var mypromise = new Promise((res, rej) => {
       rej("Error1"); // catch Error1
@@ -156,6 +157,58 @@ The `then()` method:
       .then(res => {console.log("Reached?"); throw new Error("error2");}) // not reached
       .catch(err => console.log("2:" + err)); // 2:Error1
     ```
+
+## Cancel a primise 
+Basic cancellation
+```
+var wait = (time, cancel = Promise.reject()) => 
+  new Promise((resolve, reject) => {
+    var timer = setTimeout(resolve, time);
+    var noop = () => {};
+
+    cancel.then(() => 
+      { // cancel.resolve
+        clearTimeout(timer);
+        reject(new Error('Cancelled'));
+      }, 
+      noop); // cancel.reject
+});
+
+var shouldCancel = Promise.resolve(); // Yes, cancel
+// var shouldCancel = Promise.reject(); // No, don't cancel
+
+wait(2000).then(
+  () => console.log('Hello!'),
+  e => console.log(e) // [Error: Cancelled]
+); 
+```
+Try to cancel with timeout
+```
+var wait = (delay, cancel = Promise.reject()) => 
+  new Promise((resolve, reject) => {
+    var timer = setTimeout(resolve, delay, "Processed");
+    var noop = () => {};
+
+    cancel.then(msg => 
+      {
+        console.log("Try cancel:" + msg);
+        clearTimeout(timer);
+        reject(new Error('Cancelled'));
+      }, 
+      noop);
+});
+
+var cancelAfterTimeout = (timeout) => 
+	new Promise(resolve => setTimeout(resolve, timeout, "Timed out")); 
+
+var result = wait(2000, cancelAfterTimeout(8000)).then(
+  p => console.log("Result:" + p),
+  e => console.log(e) 
+); 
+```
+Note, `setTimeout(resolve("Processed"), delay)` doesn't work, need to bind the return value to setTimeout like the above or do:  
+`setTimeout(resolve.bind(null, "Processed"), delay)` or  
+`setTimeout(function() {resolve("Processed"), delay)`  
 
 ## `Promise.all()`
 Preferred way:  
