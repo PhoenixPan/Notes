@@ -9,7 +9,7 @@
 ## Why do we use Promise?
 1. Enable easier async
 2. Avoid callback hell, flatten with `.then()`
-3. Mitigrate Inversion of Control (IOC)
+3. Mitigate Inversion of Control (IOC)
 
 Promise should be treated as a blackbox, only the function responsible for creating the promise should know the promise status and have access to resolve/reject functions.
 
@@ -19,7 +19,7 @@ Promise constructor takes a function, which takes two parameters: `resolve()` an
 promise.then(
   onFulfilled?: Function,
   onRejected?: Function
-) => Promise
+) // => Promise
 ```
 
 The `then()` method:
@@ -33,31 +33,29 @@ The `then()` method:
 
 [Reference: What is Promise](https://medium.com/javascript-scene/master-the-javascript-interview-what-is-a-promise-27fc71e77261)
 
-## Examples
+### Examples
 1. Promise is async
     ```
     var promiseCount = 0;
     function testPromise() {
-        ++promiseCount;
-        console.log("Sync starts: " + promiseCount)
+      ++promiseCount;
+      console.log("Sync starts: " + promiseCount)
 
-        let myPromise = new Promise((resolve, reject) => {
-                console.log("Async starts: " + promiseCount);
-                window.setTimeout(function() { resolve(promiseCount);}, 1000);
-            }
-        );
+      let myPromise = new Promise((resolve, reject) => {
+          console.log("Async starts: " + promiseCount);
+          window.setTimeout(function() { resolve(promiseCount);}, 1000);
+        }
+      );
 
-        myPromise
-        .then(
-            function(fulfillment) { 
-                console.log("Async ends: " + fulfillment);
-            })
-        .catch(
-          (reason) => {
-                console.log('Handle rejected promise ('+ reason +') here.');
-            });
+      myPromise
+        .then(function(fulfillment) { 
+          console.log("Async ends: " + fulfillment);
+        })
+        .catch((reason) => {
+          console.log('Handle rejected promise ('+ reason +') here.');
+        });
 
-        console.log("Sync ends: " + promiseCount)
+      console.log("Sync ends: " + promiseCount)
     }
 
     testPromise();
@@ -90,21 +88,22 @@ The `then()` method:
       .then(b => console.log(b)) // 'foo'
       .then(() => {throw new Error('foo');})
       // When a promise is rejected, the resolve handler gets skipped
-      .then(                                                                     
-        d => console.log(`d: ${ d }`), // not logged
+      // this then() acts like a catch(), or say then(undefined, rej), due to the error
+      .then( 
+        d => console.log(`d: ${ d }`), // skipped
         e => console.log(e)) // log the error: Error: foo
       // With the previous exception handled, we can continue:
       .then(f => console.log(`f: ${ f }`)) // f: undefined
-      .catch(e => console.log(e)) // not logged because there's no error
+      .catch(e => console.log(e)) // skipped because there's no error
       .then(() => { throw new Error('bar'); })
-      .then(g => console.log(`g: ${ g }`)) // not logged because of the 'bar' error
+      .then(g => console.log(`g: ${ g }`)) // skipped because of the 'bar' error
       .catch(h => console.log(h)) // Error: bar
     ;
     ```
 
     ```
     wait(200)
-      .then(a => 300) //swallowed
+      .then(a => 300)
       .then(a => 500)
       .then(b => console.log(b)) // 500
       .then(c => console.log(c)) // undefined
@@ -121,44 +120,56 @@ The `then()` method:
     In this example, error in handleSuccess will be swallowed:
     ```
     save()
-    .then(
-      handleSuccess, // error swallowed here
-      handleError
-    );
+      .then(
+        handleSuccess, // error here not caught
+        handleError
+      );
     // without catch()
     ```
     Now we allow different ways to handle different error
     ```
     save()
-    .then(
-        handleSuccess,
-        handleNetworkError
-      )
-    .catch(handleProgrammerError)
-    ;
+      .then(
+          handleSuccess,
+          handlePromiseRejection
+        )
+      .catch(handleSuccessError);
     ```
 
-## Order of error handling  
-```
-var mypromise = new Promise((res, rej) => {
-	rej("Error1"); // catch Error1
-	//res("success"); // catch Error2
-});
+    ```
+    var myPromise = value => new Promise((res, rej) => { value >= 60? res("pass"): rej("fail");});
+    myPromise(60).then(
+      result => { console.log(result); throw new Error("try") }, // error not handled 
+      reject => console.log(reject)
+    );
+    ```
 
-mypromise.then(
-  res => console.log(res)
-).then(
-  res => {throw new Error("error2");}
-).catch(
-  err => console.log(err)
-)
-```
+4. Carrying an error will skip all `then()` that have no reject handling
+    ```
+    var mypromise = new Promise((res, rej) => {
+      rej("Error1"); // catch Error1
+      //res("success"); // catch Error2
+    });
 
-## fetch
-Use ES6 fetch API, which return a promise
+    mypromise
+      .then(res => console.log("1:" + res))
+      .then(res => {console.log("Reached?"); throw new Error("error2");}) // not reached
+      .catch(err => console.log("2:" + err)); // 2:Error1
+    ```
+
+## `Promise.all()`
+Preferred way:  
 ```
- const promise = fetch(`http://www.example.com?num1=${num1}&num2=${num2}`)
-        .then(x => x.json());
+var [result1, result2] = await Promise.all([resolvePromise(), resolvePromise()]);
+console.log("completed");
+```
+Unrecommended way:  
+```
+var promise1 = resolvePromise();
+var promise2 = resolvePromise();
+var result1 = promise1;
+var result2 = promise2;
+console.log("completed");
 ```
 
 ## Promise with Ajax
@@ -257,23 +268,14 @@ async function resolvePromise() {
 var result = await resolvePromise();
 ```
 
-## Multiple async tasks
-Preferred way:  
-```
-var [result1, result2] = await Promise.all([resolvePromise(), resolvePromise()]);
-console.log("completed");
-```
-Unrecommended way:  
-```
-var promise1 = resolvePromise();
-var promise2 = resolvePromise();
-var result1 = promise1;
-var result2 = promise2;
-console.log("completed");
-```
 
 <a id="fetch"></a>  
 ## Fetch
+Use ES6 fetch API, which return a promise
+```
+ const promise = fetch(`http://www.example.com?num1=${num1}&num2=${num2}`)
+        .then(x => x.json());
+```
 1. Problems:
   1. Error handling
       ```

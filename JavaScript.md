@@ -49,6 +49,22 @@ console.log(y);
 console.log(x + y); // undefinedA
 ```
 
+#### Function hoisting: hoisting the entire function rather than the declaration
+```
+function testOuter() {
+    function number() { return 1; }
+
+    function testInner() {
+        console.log("inner: " + number());
+        function number() { return 2; }
+    };
+    testInner();
+    console.log("outer: " + number());
+}
+
+testOuter();
+```
+
 ### Storage
 1. Window.localStorage: across session
 2. Window.sessionStorage: live for one session, refresh is ok, die upon closing tab
