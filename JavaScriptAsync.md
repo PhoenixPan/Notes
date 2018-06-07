@@ -161,9 +161,9 @@ The `then()` method:
 ## Cancel a primise 
 Basic cancellation
 ```
-var wait = (time, cancel = Promise.reject()) => 
+var wait = (delay, cancel = Promise.reject()) => 
   new Promise((resolve, reject) => {
-    var timer = setTimeout(resolve, time);
+    var timer = setTimeout(resolve, delay);
     var noop = () => {};
 
     cancel.then(() => 
@@ -189,9 +189,8 @@ var wait = (delay, cancel = Promise.reject()) =>
     var timer = setTimeout(resolve, delay, "Processed");
     var noop = () => {};
 
-    cancel.then(msg => 
+    cancel.then(()) => 
       {
-        console.log("Try cancel:" + msg);
         clearTimeout(timer);
         reject(new Error('Cancelled'));
       }, 
@@ -199,7 +198,7 @@ var wait = (delay, cancel = Promise.reject()) =>
 });
 
 var cancelAfterTimeout = (timeout) => 
-	new Promise(resolve => setTimeout(resolve, timeout, "Timed out")); 
+  new Promise(resolve => setTimeout(resolve, timeout, "Timed out")); 
 
 var result = wait(2000, cancelAfterTimeout(8000)).then(
   p => console.log("Result:" + p),
@@ -209,6 +208,32 @@ var result = wait(2000, cancelAfterTimeout(8000)).then(
 Note, `setTimeout(resolve("Processed"), delay)` doesn't work, need to bind the return value to setTimeout like the above or do:  
 `setTimeout(resolve.bind(null, "Processed"), delay)` or  
 `setTimeout(function() {resolve("Processed"), delay)`  
+
+### A wrapper to add timeout to promise 
+```
+var timedPromiose = (timeout, promise) => {
+  return new Promise((resolve, reject) => {
+    var timer = setTimeout(reject, timeout, new Error("Timeout"));
+    
+    promise
+      .then(res => {
+          clearTimeout(timer);
+          resolve(res);
+        })
+      .catch(rej => {
+          clearTimeout(timer);
+          reject(res);
+        });
+  });
+}
+
+var testPromise = new Promise(res => setTimeout(res, 3000, "Success"));
+
+timedPromiose(4000, testPromise) // change the timeout to get different result
+.then(p => console.log("Processed: " + p))
+.catch(e => console.log("Error: " + e));
+```
+
 
 ## `Promise.all()`
 Preferred way:  

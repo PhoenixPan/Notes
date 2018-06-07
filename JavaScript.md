@@ -591,10 +591,7 @@ for(var i = 0; i < 5; i++) {
 ```
 <a id="ErrorHandling"></a>  
 ## Error Handling
-1. Most common usage: 
-    ```
-    throw new Error("Please enter a valid value.");
-    ```
+1. Use `throw new Error("Error");` rather than `throw "Error";`, the latter may not contain message in error object in some browsers
 
 2. `throw` anything from string, number, bool, object. These are all valid: 
     ```
