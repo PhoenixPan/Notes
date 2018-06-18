@@ -402,7 +402,12 @@ array.forEach(function(color) { // anonymous function
     Difference between `Array.from()` and spread operator:
     1. `Array.from()` operates on both array-likes and iterables, but the spread operator operates only on iterables
     2. `Array.from()` generates an array strictly: [1, Array.from([2,3]), 4] ---> [1, [2, 3], 4]
-
+    Work on objects too:
+    ```
+    var state = {"a": 1, "b": 2};
+    var add = {"c":3, "d": 4};
+    console.log({...state, ...add}); // {a: 1, b: 2, c: 3, d: 4}
+    ```
 
 [Rest parameters and spread operator](https://javascript.info/rest-parameters-spread-operator)  
 [Rest parameters MDN](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Functions/rest_parameters)
