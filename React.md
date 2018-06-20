@@ -39,22 +39,60 @@ only class-based components have states, not function-based ones
 Redux: Fetching data  
 React: Displaying data
 
-1. Container component: a normal React component managed by Redux state. When app state changes, it re-renders
+1. Container component: a normal React component managed by Redux state. It re-renders upon a change in the state it listens to
+2. `mapStateToProps()` specify which redux state your component listens to
+3. `dispatch()` the only way to fire an action, find from ``
+4. `bindActionCreators()`: Turns an object whose values are action creators, into an object with the same keys, but with every action creator wrapped into a dispatch call so they may be invoked directly. The only use case for bindActionCreators is when you want to pass some action creators down to a component that isn't aware of Redux (not `connect`ed), and you don't want to pass dispatch or the Redux store to it.
 
 ## Action / Action Creator
 1. Action objects always have "type"
-2. Ways to add to the state:
-    1. Through `Object.assign())`:
+2. Ways to change the state:
+    1. Add: Through `Object.assign())`:
         ```
         Object.assign({}, state, {
             newState: value
         })
         ```
         Note: `Object.assign(state, { newState: value })` is wrong, it mutates the first argument.
-    2. Spread operator:
+    2. Add: Spread operator:
         ```
         { ...state, ...newState }
         ```
+
+3. Ways of dispatch
+    1. `bindActionCreators`
+    ```
+    function matchDispatchToProps(dispatch) {
+      return bindActionCreators({ userSignUp: userSignUp}, dispatch);
+    }
+    ```
+    the same as:
+    ```
+    function mapDispatchToProps(dispatch) {
+      return bindActionCreators({ userSignUp: {type: "USER_SIGNUP", payload: {}, status: "pending"}}, dispatch);
+    }
+    ```
+    
+    2. dispatch directly: the result is the same to (1.)
+    ```
+    this.props.dispatch(userSignUp());
+
+    const mapDispatchToProps = (dispatch) => ({
+      userSignUp: () => dispatch(userSignUp())
+    });
+    ```
+    
+    3. Pass the object {key: function} to the connect method, and it will do the wrapping for you
+    ```
+    connect(mapStateToProps, { userSignUp: () => {return {type: "USER_SIGNUP", payload: {},status: "pending"}}})(ComponentName)
+    ```
+    the same as:
+    ```
+    function userSignUp() {...};
+    connect(mapStateToProps, { userSignUp })(ComponentName)
+    ```
+
+
 
 ## Reducer
 Given the same arguments, it should calculate the next state and return it. No surprises. No side effects. No API calls. No mutations. Just a calculation.
