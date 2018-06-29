@@ -13,7 +13,7 @@
 
 Promise should be treated as a blackbox, only the function responsible for creating the promise should know the promise status and have access to resolve/reject functions.
 
-Promise constructor takes a function, which takes two parameters: `resolve()` and `reject()`. You can optionally `resolve(value)` or `reject(value)` with values, which will be passed to the callback functions attached with `then()` or `catch()` when the promise is **settled**. Promise status and its value must not change once it's settled. 
+Promise constructor takes a function, which takes two functions as parameters: `new Promise(function(resolve, reject)`. You can optionally `resolve(value)` or `reject(value)` with values, which will be passed to the callback functions attached with `then()` or `catch()` when the promise is **settled**. Promise status and its value must not change once it's settled. 
 
 ```
 promise.then(
@@ -23,13 +23,14 @@ promise.then(
 ```
 
 The `then()` method:
-1. `then()` returns a new promise
-2. `catch(reject)` is a syntax suger for `then(undefined, reject)`
-3. If the arguments supplied to `then()` are not functions, this `then()` will be ignored and the chain will continue with the same promise:  
+1.  returns a new promise
+2. Takes up to two callback functions, `onFulfilled()` and `onRejected()`, for the success and failure cases of the promise 
+3. `onFulfilled()` called if fulfilled, with the fulfillment value as the only argument
+4. `onRejected()` called if rejected, with the rejection reason as the only argument, use Error objects to catch
+5. Both `onFulfilled()` and `onRejected()` are optional
+6. If the arguments supplied to `then()` are not functions, this `then()` will be ignored and the chain will continue with the same promise:  
   `myPromise.then(888) // => myPromise`
-4. Both `onFulfilled()` and `onRejected()` are optional
-5. `onFulfilled()` called if fulfilled, with the promise's value as the first argument
-6. `onRejected()` called if rejected, with the reason for rejection as the first argument, use Error objects to catch
+7. `catch(reject)` is a syntax suger for `then(undefined, reject)`
 
 [Reference: What is Promise](https://medium.com/javascript-scene/master-the-javascript-interview-what-is-a-promise-27fc71e77261)
 
