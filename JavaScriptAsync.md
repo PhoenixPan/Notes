@@ -165,21 +165,22 @@ The `then()` method:
 ```
 var wait = (delay, cancel = Promise.reject()) => 
   new Promise((resolve, reject) => {
-    var timer = setTimeout(resolve, delay);
-    var noop = () => {};
 
-    cancel.then(() => 
-      { // cancel.resolve
+    var timer = setTimeout(resolve, delay);
+
+    cancel.then(
+      () => { // cancel.resolve
         clearTimeout(timer);
         reject(new Error('Cancelled'));
       }, 
-      noop); // cancel.reject
+      () => {} // cancel.reject
+    ); 
 });
 
 var shouldCancel = Promise.resolve(); // Yes, cancel
-// var shouldCancel = Promise.reject(); // No, don't cancel
+// var shouldNotCancel = Promise.reject(); // No, don't cancel
 
-wait(2000).then(
+wait(1000).then(
   () => console.log('Hello!'),
   e => console.log(e) // [Error: Cancelled]
 ); 
@@ -188,15 +189,16 @@ Try to cancel with timeout
 ```
 var wait = (delay, cancel = Promise.reject()) => 
   new Promise((resolve, reject) => {
-    var timer = setTimeout(resolve, delay, "Processed"); // Fix1
-    var noop = () => {};
 
-    cancel.then(() => 
-      {
+    var timer = setTimeout(resolve, delay, "Processed"); // Fix1
+
+    cancel.then(
+      () => { // cancel.resolve
         clearTimeout(timer);
         reject(new Error('Cancelled'));
       }, 
-      noop);
+      () => {} // cancel.reject
+    ); 
 });
 
 var cancelAfterTimeout = (timeout) => 
