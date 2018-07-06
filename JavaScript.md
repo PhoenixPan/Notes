@@ -488,14 +488,18 @@ https://stackoverflow.com/questions/650764/how-does-proto-differ-from-constructo
 1. Whenever you use function inside another function, a closure is used.
 2. A closure in JavaScript is like keeping all the local variables stay alive in the status as they were even after the function is exited.
 
-Example 1:
+用闭包模拟私有方法，提供了许多与面向对象编程相关的好处，特别是数据隐藏和封装。
+
+
+#### Example 1
 ```
 function name() {
   console.log(alice);
   var alice = "Alice";
 }
-name(); // undefined, hoisting
-
+name(); // undefined becasue of hoisting
+```
+```
 function name() {
     var say = function() { console.log(alice); }
     var alice = "Alice";
@@ -503,14 +507,45 @@ function name() {
 }
 name()(); // Alice
 ```
-The local variables of name() are kept in a closure, so we can still get result from say()
-Closure keeps a stack-frame in memory when the outer function exits
+Closure keeps a stack-frame in memory when the outer function exits: so we can still access local variables of name() from say(). 
 
-Example 2:
+#### Example 2
+
+在一个闭包内对变量的修改，不会影响到另外一个闭包中的变量。
+
+```
+var makeCounter = function() {
+  var privateCounter = 0;
+  function changeBy(val) {
+    privateCounter += val;
+  }
+  return {
+    increment: function() {
+      changeBy(1);
+    },
+    decrement: function() {
+      changeBy(-1);
+    },
+    value: function() {
+      return privateCounter;
+    }
+  }  
+};
+
+var Counter1 = makeCounter();
+var Counter2 = makeCounter();
+console.log(Counter1.value()); /* logs 0 */
+Counter1.increment();
+Counter1.increment();
+console.log(Counter1.value()); /* logs 2 */
+Counter1.decrement();
+console.log(Counter1.value()); /* logs 1 */
+console.log(Counter2.value()); /* logs 0 */
+```
+
 ```
 var gLogNumber, gIncreaseNumber, gSetNumber;
 function setupSomeGlobals() {
-  // Local variable that ends up within closure
   var num = 42;
   // Store some references to functions as global variables
   gLogNumber = function() { console.log(num); }
@@ -520,28 +555,29 @@ function setupSomeGlobals() {
 
 setupSomeGlobals();
 gIncreaseNumber();
-gLogNumber(); // 43  <==== three functions reference to the same, existing closure, rather than a new copy
+gLogNumber(); // 43
 gSetNumber(5);
 gLogNumber(); // 5
 
 var oldLog = gLogNumber;
 
 setupSomeGlobals();
-gLogNumber(); // 42 <==== three functions reference to the same closure
+gLogNumber(); // 42, refer to a new closure
 
 oldLog() // 5
 ```
-Example 3:
+
+#### Example 3
 ```
 var getI;
 function buildList(list) {
     var result = [];
     for (var i = 0; i < list.length; i++) {
         var item = 'item' + i;
-        result.push( function() {console.log(item + ' ' + list[i])} );
-        console.log(item) // item0, item1, item2, normal
+        result.push( function() { console.log(item + ' ' + list[i])} );
+        console.log(item) // item0, item1, item2, ...
     }
-    getI = function(){console.log(i);}
+    getI = function() { console.log(i); }
     // item = "changed"; // if we change item here, all following "item2 undefined" will be ""changed undefined"
    
    // logs "item2 undefined" 3 times, referring to the stack already
@@ -561,7 +597,8 @@ function testList() {
 getI(); // i is already 3. So we 
 testList() //logs "item2 undefined" 3 times
 ```
-Example 4: 
+
+#### Example 4
 There is not a single closure per function declaration. There is a closure for each call to a function.
 ```
 function newClosure(someNum, someRef) {
@@ -594,6 +631,30 @@ for(var i = 0; i < 5; i++) {
     }, 1000);
 }
 ```
+
+
+Immediately-Invoked-Function-Expressions
+<a id="ModulePattern"></a>  
+## Module Pattern
+1. Module, aka Immediately-Invoked-Function-Expressions, used to mimic the Class behavior that contains private elements.
+```
+(function () {
+  // code
+})();
+```
+```
+var Module = (function () {
+  return {
+    publicMethod: function () {
+      // code
+    }
+  };
+})();
+
+Module.publicMethod();
+```
+
+
 <a id="ErrorHandling"></a>  
 ## Error Handling
 1. Use `throw new Error("Error");` rather than `throw "Error";`, the latter may not contain message in error object in some browsers
