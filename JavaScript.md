@@ -8,6 +8,7 @@
 - [Object](#Object)
 - [Prototype Chain](#PrototypeChain)
 - [Closure](#Closure)
+- [Design Patterns](#DesignPatterns)
 - [Error Handling](#ErrorHandling)
 
 
@@ -280,6 +281,35 @@ https://www.tutorialspoint.com/es6/es6_functions.htm
     `function.call([this][, arg1][, arg2],...)`
     if it's not passed, "this" is bound to global object 
 
+### Class 
+1. Static method & public method for Class objects
+
+```
+function MyClass () {
+  var privateVariable; // private member, available within the constructor
+
+  this.privilegedMethod = function () { // iaccess private members
+    //..
+  };
+}
+
+// A 'static method', it's just like a normal function 
+// it has no relation with any 'MyClass' object instance
+// just adding a property to the function object
+MyClass.staticMethod = function () {};
+
+// Extending the constructor of function prototype
+// available to all instances created and child class instances
+MyClass.prototype.publicMethod = function () {
+  // the 'this' keyword refers to the object instance
+  // you can access only 'privileged' and 'public' members
+};
+
+var myObj = new MyClass(); // new object instance
+
+myObj.publicMethod();
+MyClass.staticMethod();
+```
 
 #### Example 1
 ```
@@ -437,6 +467,7 @@ function Toy(name, price) {
 var cheese = new Food('feta', 5, "food");
 var fun = new Toy('robot', 40);
 ```
+
 <a id="PrototypeChain"></a>  
 ## Prototype Chain
 1. prototype: Only in functions.
@@ -633,17 +664,19 @@ for(var i = 0; i < 5; i++) {
 ```
 
 
-Immediately-Invoked-Function-Expressions
-<a id="ModulePattern"></a>  
-## Module Pattern
+<a id="DesignPatterns"></a>  
+## Design Patterns
+
+### Module Pattern
 1. Module, aka Immediately-Invoked-Function-Expressions, used to mimic the Class behavior that contains private elements.
-```
-(function () {
-  // code
-})();
-```
+
 ```
 var Module = (function () {
+
+  var privateMethod = function () {
+    // do something
+  };
+
   return {
     publicMethod: function () {
       // code
