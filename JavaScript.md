@@ -286,23 +286,21 @@ https://www.tutorialspoint.com/es6/es6_functions.htm
 
 ```
 function MyClass () {
-  var privateVariable; // private member, available within the constructor
+  var _privateVariable; // private member
 
-  this.privilegedMethod = function () { // iaccess private members
-    //..
-  };
+  function _privateMethod() { //.. };
+  
+  this.privilegedMethod = function () { //.. };
 }
 
-// A 'static method', it's just like a normal function 
-// it has no relation with any 'MyClass' object instance
-// just adding a property to the function object
+// No relation with any instance but the constructor
+// just adding a property to the constructor function object
 MyClass.staticMethod = function () {};
 
 // Extending the constructor of function prototype
 // available to all instances created and child class instances
 MyClass.prototype.publicMethod = function () {
   // the 'this' keyword refers to the object instance
-  // you can access only 'privileged' and 'public' members
 };
 
 var myObj = new MyClass(); // new object instance
@@ -671,20 +669,31 @@ for(var i = 0; i < 5; i++) {
 1. Module, aka Immediately-Invoked-Function-Expressions, used to mimic the Class behavior that contains private elements.
 
 ```
-var Module = (function () {
+var Module = (function (param) {
 
-  var privateMethod = function () {
-    // do something
+  var _privateMethod = function () { //.. };
+  var priviledgedMethod = function () { //.. };
+  var anotherpriviledgedMethod = function () { //.. };
+
   };
 
   return {
-    publicMethod: function () {
-      // code
-    }
+    priviledgedMethod: priviledgedMethod,
+    anotherpriviledgedMethod: anotherpriviledgedMethod
   };
-})();
 
-Module.publicMethod();
+})();
+```
+2. Module extension
+```
+var ModuleExtended = (function (Module) {
+
+  Module.extension = function () { //.. }; 
+  return Module; 
+
+})(Module || {});
+
+// return Object {someMethod: function, anotherMethod: function, extension: function}
 ```
 
 
