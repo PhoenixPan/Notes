@@ -695,7 +695,7 @@ var ModuleExtended = (function (Module) {
 
 // return Object {someMethod: function, anotherMethod: function, extension: function}
 ```
-
+[Reference](https://toddmotto.com/mastering-the-module-pattern/#creating-a-module)
 
 <a id="ErrorHandling"></a>  
 ## Error Handling
