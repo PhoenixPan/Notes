@@ -390,14 +390,18 @@ array.forEach(function(color) { // anonymous function
     }
     ```
 
-5. `splice()`:  
+5. `splice()`: will change the origin array  
     var nums = [1, 2, 3, 4];
     1. `splice(startIndex)`: nums.splice(2); //return [3, 4], nums = [1, 2]
     2. `splice(startIndex, deleteCount)`: nums.splice(2, 1); //return [3], nums = [1, 2, 4]
     3. `splice(startIndex, deleteCount, ...[values])`:  
         nums.splice(2, 1, ...[5, 6]); // return [3], nums = [1, 2, 5, 6, 4]
-
-
+6. `slice()`: will not change the origin array  
+    ```  
+    var animals = ['ant', 'bison', 'camel', 'duck', 'elephant'];
+    console.log(animals.slice(2, 4)); // ["camel", "duck"]
+    ```
+	
 ### Rest parameters and Spread operator 
 1. Looks the same `...array`
 2. Rest parameters (array instance): allows us to represent an indefinite number of arguments as an array
