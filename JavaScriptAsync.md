@@ -293,7 +293,10 @@ getJSON("https://httpbin.org/get").then(function(response) {
 <a id="generator"></a>  
 # Generator
 1. Return a Generator object to iterator
-2. First call of `next()` executes until the first `yield` statement
+2. When the iterator's `next()` method is called, the generator function's body is executed until the first yield expression (code not execute, but value is resolved), which specifies the value to be returned from the iterator or, with yield*, delegates to another generator function. The first yield value is read upon the first `next()`.   
+[Does the first next() in js generator function always execute until the first yield?
+](https://stackoverflow.com/questions/52826489/does-the-first-next-in-js-generator-function-always-execute-until-the-first-yi)
+
   ```
   function* logGenerator() {
     console.log(0, yield);
