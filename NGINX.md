@@ -11,6 +11,7 @@
 1. Start NGINX: `sudo service nginx start`
 2. Reload upon changes in config: `service nginx reload`
 3. Status: `service nginx status`
+4. Check syntax: `nginx -t -c /etc/nginx/nginx.conf`
 
 ## Configuration
 1. Config file: `/etc/nginx/nginx.conf`
@@ -27,9 +28,6 @@
         }
     }
     ```
-
-
-
 
 ## Reference
 [Virtual Hosts on nginx (CSC309)](https://gist.github.com/soheilhy/8b94347ff8336d971ad0)
