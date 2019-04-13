@@ -89,6 +89,16 @@ http {
 
 	include /etc/nginx/conf.d/*.conf;
 	include /etc/nginx/sites-enabled/*;
+	
+	server {
+	    listen       80;
+	    server_name  json-server;
+
+	    location / {
+	      proxy_pass http://localhost:3000/;
+	      include /etc/nginx/proxy_params;
+	    }
+	}
 }
 
 
