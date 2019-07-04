@@ -14,10 +14,12 @@ docker pull pjbzz100/project-portal
 
 ## 2. Run the image and create a container 
 ```
-docker run -d -p 3000:80 pjbzz100/project-portal --rm
+docker run -d -p 3000:80 pjbzz100/project-portal
 ```
-1. `--rm`: removes the container and volumes after the container exits
-2. `-v %cd%:/src`: mounts the code into the container at "/src"
+1. `-d`: runs container in background and print container ID
+2. `-it`: creates an interactive bash shell in the container
+3. `--rm`: removes the container and volumes after the container exits
+4. `-v %cd%:/src`: mounts the code into the container at "/src"
 
 ## 3. Build an image
 ```
