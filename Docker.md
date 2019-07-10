@@ -18,7 +18,7 @@ docker run -d -p 3000:80 pjbzz100/project-portal
 ```
 1. `-d`: runs container in background and print container ID
 2. `-it`: creates an interactive bash shell in the container
-3. `--rm`: removes the container and volumes after the container exits
+3. `--rm`: removes the container and volumes automatically after the container exits
 4. `-v %cd%:/src`: mounts the code into the container at "/src"
 
 ## 3. Build an image
