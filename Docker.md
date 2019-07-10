@@ -27,3 +27,34 @@ docker build -t react-docker-app .
 ```
 1. `-t`: specifies the name of the image
 2. `.` specifies the build context (e.g. the current folder)
+
+
+
+## Clean up 
+### All
+Clean up unused resource
+```
+docker system prune
+```
+Include stopped resources
+```
+docker system prune -a
+```
+
+### Images
+Remove single image
+```
+docker images -a
+docker rmi [IMAGE ID/NAME]
+```
+Remove unused images
+```
+docker images purge
+```
+
+### Containers
+Remove single container
+```
+docker ps -a
+docker rm [CONTAINER ID/NAME]
+```
