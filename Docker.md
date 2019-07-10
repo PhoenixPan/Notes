@@ -23,12 +23,22 @@ docker run -d -p 3000:80 pjbzz100/project-portal
 
 ## 3. Build an image
 ```
-docker build -t react-docker-app .
+docker build -t project-portal .
 ```
 1. `-t`: specifies the name of the image
 2. `.` specifies the build context (e.g. the current folder)
 
+## 4. Tag an image to be ready to push to the repo
 
+```
+docker tag [LOCAL IMAGE ID] [USERNAME]/[REPO]
+docker tag 423d4931369f pjbzz100/project-portal
+```
+
+## 5. Push the new image to the repo
+```
+docker push pjbzz100/project-portal
+```
 
 ## Clean up 
 ### All
