@@ -171,7 +171,7 @@ testOuter();
 <a id="Variables"></a>  
 ## Variables 
 1. Undeclared variables: implicit globals
-2. const: cannot be reassigned but can be changed (e.g. array)
+2. const: cannot be reassigned but can be changed (array/object can still be modified)
 3. null is explicit empty. var person = null The value of person is null but typeof person is object, which is considered a bug
 4. You can re-declare a variable. If you don't assign a new value, it will keep the old one:
     ```
@@ -221,27 +221,33 @@ b.x; // {n: 2}
     ```
 
 ### let
-1. `let` allows you to limit the scope to the block, statement, or expression on which it is used, unlike var, which defines variables for at least the scope of a function
+1. `let` allows you to limit the scope to the block, statement, or expression on which it is used, unlike var, which defines variables for at least the scope of a function.
     ```
+    var x = 5;
     function varTest() {
-    var x = 1;
-    if (true) {
-        var x = 2;  // same variable!
+        var x = 1;
+        if (true) {
+            var x = 2;  // same variable!
+            console.log(x);  // 2
+        }
         console.log(x);  // 2
+        console.log(window.x); //5
     }
-    console.log(x);  // 2
-    }
+    varTest();
 
+    let x = 5;
     function letTest() {
-    let x = 1;
-    if (true) {
-        let x = 2;  // different variable
-        console.log(x);  // 2
+        let x = 1;
+        if (true) {
+            let x = 2;  // different variable
+            console.log(x);  // 2
+        }
+        console.log(x);  // 1
+        console.log(window.x); //undefined
     }
-    console.log(x);  // 1
-    }
+    letTest();
     ```
-2. `let` does not create a property on the global object (window)
+2. `let` cannot be global
     ```
     var x = 'global';
     let y = 'global';
@@ -254,14 +260,14 @@ b.x; // {n: 2}
     let a = 6; // Uncaught SyntaxError: Identifier 'a' has already been declared
     ```
 4. `let` will hoist, it will be in a "dead zone", so referring it before declaration will cause ReferenceError: not defined
-```
-console.log(a)
-let a = 6; // Uncaught ReferenceError: a is not defined
-```
-```
-let a;
-console.log(a) // undefined
-```
+    ```
+    console.log(a)
+    let a = 6; // Uncaught ReferenceError: a is not defined
+    ```
+    ```
+    let a;
+    console.log(a) // undefined
+    ```
 
 <a id="Functions"></a>  
 ## Functions
@@ -403,43 +409,54 @@ array.forEach(function(color) { // anonymous function
     ```
 	
 ### Rest parameters and Spread operator 
-1. Looks the same `...array`
-2. Rest parameters (array instance): allows us to represent an indefinite number of arguments as an array
+Looks the same `...array`
+#### Rest parameters (array instance)
+Allows us to represent an indefinite number of arguments as an **array**
+```
+function sum(a, b) {
+    return a + b;
+}
+console.log( sum(1, 2, 3, 4, 5) ); // 3
+
+var sumAll = (...args) => { 
+    let sum = 0;
+    for (let arg of args) sum += arg;
+    return sum;
+}
+console.log( sum(1, 2, 3, 4, 5) ); // 15
+```
+
+Difference between `arguments` object and rest param:
+1. `arguments` is an Array-like object accessible inside functions that contains the values of the arguments passed to that function
     ```
-    function sum(a, b) {
-        return a + b;
+    function func(a, b, c) {
+        console.log(arguments[0]);
     }
-    console.log( sum(1, 2, 3, 4, 5) ); // 3, but no error
+    func(1,2,3); // 1
+    ```
+2. `arguments` is both array-like and iterable but still not an array. So we can't use array functions on it, but it has additional functionality specific to itself
+3. `arguments` does not exist in arrow functions
+4. `arguments` contains all params, rest param contains only unspecified params
 
-    var sumAll = (...args) => { 
-        let sum = 0;
-        for (let arg of args) sum += arg;
-        return sum;
-    }
-    console.log( sum(1, 2, 3, 4, 5) ); // 15
-    ```
-    Difference between `arguments` object and rest param:
-    1. `arguments` is both array-like and iterable, but still not an array, so we can't use array functions on it
-    2. `arguments` does not exist in arrow functions
-    3. `arguments` contains all params, rest param contains only undefined params
+#### Spread operator
+Turns an iterable (String, Array, Map, Set, ...) into arguments of a function or into elements of an array. 
+```
+Math.max(...array);
+array1.push(...array2);
+[1, ...[2,3], 4]; // [1,2,3,4]
+const arr = [...array1, ...array2, ...array3]
+```
 
-
-3. Spread operator: turns an iterable (String, Array, Map, Set, ...) into arguments of a function or into elements of an array
-    ```
-    Math.max(...array);
-    array1.push(...array2);
-    [1, ...[2,3], 4]; // [1,2,3,4]
-    const arr = [...array1, ...array2, ...array3]
-    ```
-    Difference between `Array.from()` and spread operator:
-    1. `Array.from()` operates on both array-likes and iterables, but the spread operator operates only on iterables
-    2. `Array.from()` generates an array strictly: [1, Array.from([2,3]), 4] ---> [1, [2, 3], 4]
-    Work on objects too:
-    ```
-    var state = {"a": 1, "b": 2};
-    var add = {"c":3, "d": 4};
-    console.log({...state, ...add}); // {a: 1, b: 2, c: 3, d: 4}
-    ```
+Difference between `Array.from()` and spread operator:
+1. `Array.from()` operates on both array-likes and iterables, but the spread operator operates only on iterables
+2. `Array.from()` generates an array strictly: [1, Array.from([2,3]), 4] ---> [1, [2, 3], 4]
+    
+Work on objects too:
+```
+var state = {"a": 1, "b": 2};
+var add = {"c":3, "d": 4};
+console.log({...state, ...add}); // {a: 1, b: 2, c: 3, d: 4}
+```
 
 [Rest parameters and spread operator](https://javascript.info/rest-parameters-spread-operator)  
 [Rest parameters MDN](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Functions/rest_parameters)
@@ -785,3 +802,14 @@ var n = str.search(/mypattern/i);
 2. All direct children: X > Y {color:blue;}
 3. Immediate sibling: X + Y {color:blue;}
 4. All preceding sibling: X ~ Y {color:blue;}
+
+
+## ES Features
+### Template literals
+create a string using backticks (` `) 
+```
+className={`base-${theme === 'dark' ? 'darkMode' : 'lightMode'}`}
+```
+
+### Object.assign()
+Used to copy the values of all enumerable own properties from one or more source objects to a target object.
